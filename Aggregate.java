@@ -1,25 +1,31 @@
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.PrintWriter;
 
 public class Aggregate {
 
     static String operation = "";
     static String aggregatedColumn = "";
-    static int aggregatedColumnNumber=0;
+    static int aggregatedColumnNumber = 0;
     static String inputFile = "";
-    public static ArrayList<String> groupColumns = null;
+    public static ArrayList<String> groupColumns = null;  //The group columns on which we have to sort
+    public static ArrayList<Integer> groupColumnsIndex = null; //The group column index 
     public static ArrayList<ArrayList<String>> csvData;
     public static ArrayList<ArrayList<String>> desiredColumnDataforAggregation; //An array list to have the only columns on which we have to appply aggrgation
+    public static ArrayList<ArrayList<String>> helper;
 
     public static void main(String args[]) throws IOException {
         //initialization
         groupColumns = new ArrayList<String>();
+        groupColumnsIndex = new ArrayList<Integer>();
         csvData = new ArrayList<ArrayList<String>>();
         desiredColumnDataforAggregation = new ArrayList<ArrayList<String>>();
+        helper = new ArrayList<ArrayList<String>>();
 
         if (args.length > 0) {
             operation = args[0];//Operation is first argument
@@ -40,6 +46,7 @@ public class Aggregate {
                 columnCount++;
             }
             readCSVFile();
+            writeCSVfile("outputfile.csv");
             getDesiredColumns();
 
         }
@@ -68,6 +75,26 @@ public class Aggregate {
         }
     }
 
+    public static void writeCSVfile(String fileName) throws IOException {
+        PrintWriter pw = new PrintWriter(new File(fileName));
+
+        for (ArrayList<String> row : csvData) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < row.size(); i++) {
+                sb.append(row.get(i));
+                if (i != row.size() - 1) {
+                    sb.append(",");
+                }else{
+                    sb.append("\n");
+                }
+            }
+            pw.write(sb.toString());
+        }
+
+        pw.close();
+
+    }
+
     public static ArrayList<String> getArrayList(String line) {
         ArrayList<String> crunchifyResult = new ArrayList<>();
 
@@ -94,8 +121,9 @@ public class Aggregate {
 
             if (groupColumns.contains(temp) || temp.equals(aggregatedColumn)) {
                 toKeep.add(i);
-                if(temp.equals(aggregatedColumn)){
-                    aggregatedColumnNumber=i;
+                //Store only those which is not the aggrgatedcolumn
+                if (!temp.equals(aggregatedColumn)) {
+                    groupColumnsIndex.add(i);
                 }
                 //                System.out.println(temp + " is selected");
             }
@@ -114,12 +142,11 @@ public class Aggregate {
             }
             desiredColumnDataforAggregation.add(tempColumn);
         }
-        System.out.println(desiredColumnDataforAggregation);
+//        System.out.println(desiredColumnDataforAggregation);
 //System.out.println(csvData);
     }
 
     public static void mergerSort() {
-        ArrayList<ArrayList<String>> helper = new ArrayList<ArrayList<String>>();
     }
 
     public static void mergerSorthelper(int low, int high) {
@@ -129,14 +156,18 @@ public class Aggregate {
             mergerSorthelper(middle + 1, high);
         }
     }
-    
-    public static void merge(int low,int middle,int high){
-        int i=low;
-        int j=middle+1;
-        int k=low;
-        
-        while(i<middle&&j<=high){
-            
+
+    public static void merge(int low, int middle, int high) {
+
+        for (int i = low; i <= high; i++) {
+            helper.set(i, desiredColumnDataforAggregation.get(i));
+        }
+        int i = low;
+        int j = middle + 1;
+        int k = low;
+
+        while (i < middle && j <= high) {
+
         }
     }
 

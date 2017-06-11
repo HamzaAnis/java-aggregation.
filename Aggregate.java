@@ -25,7 +25,6 @@ public class Aggregate {
         groupColumnsIndex = new ArrayList<Integer>();
         csvData = new ArrayList<ArrayList<String>>();
         desiredColumnDataforAggregation = new ArrayList<ArrayList<String>>();
-        helper = new ArrayList<ArrayList<String>>();
 
         if (args.length > 0) {
             operation = args[0];//Operation is first argument
@@ -48,6 +47,14 @@ public class Aggregate {
             readCSVFile();
             writeCSVfile("outputfile.csv");
             getDesiredColumns();
+//            helper = new ArrayList<ArrayList<String>>(csvData.size());
+helper=desiredColumnDataforAggregation;
+
+            mergerSorthelper(1, desiredColumnDataforAggregation.size() - 1);
+            for (ArrayList<String> a : desiredColumnDataforAggregation) {
+                System.out.println(a);
+            }
+//            System.out.println(desiredColumnDataforAggregation);
 
         }
 
@@ -84,7 +91,7 @@ public class Aggregate {
                 sb.append(row.get(i));
                 if (i != row.size() - 1) {
                     sb.append(",");
-                }else{
+                } else {
                     sb.append("\n");
                 }
             }
@@ -96,18 +103,18 @@ public class Aggregate {
     }
 
     public static ArrayList<String> getArrayList(String line) {
-        ArrayList<String> crunchifyResult = new ArrayList<>();
+        ArrayList<String> result = new ArrayList<>();
 
         if (line != null) {
             String[] splitData = line.split("\\s*,\\s*");
             for (String splitData1 : splitData) {
                 if (!(splitData1 == null) || !(splitData1.length() == 0)) {
-                    crunchifyResult.add(splitData1.trim());
+                    result.add(splitData1.trim());
                 }
             }
         }
 
-        return crunchifyResult;
+        return result;
     }
 
     public static void getDesiredColumns() {
@@ -150,25 +157,50 @@ public class Aggregate {
     }
 
     public static void mergerSorthelper(int low, int high) {
+//        System.out.println("Called");
         if (low < high) {
             int middle = low + (high - low) / 2;
             mergerSorthelper(low, middle);
             mergerSorthelper(middle + 1, high);
+            merge(low, middle, high);
         }
     }
 
+//    number is the orignal
+//    helper is of the sam size
     public static void merge(int low, int middle, int high) {
-
         for (int i = low; i <= high; i++) {
+//            System.out.println("SET");
             helper.set(i, desiredColumnDataforAggregation.get(i));
         }
         int i = low;
         int j = middle + 1;
         int k = low;
 
-        while (i < middle && j <= high) {
+        while (i <= middle && j <= high) {
+            int check = getStringOfRow(helper.get(i)).compareTo(getStringOfRow(helper.get(j)));
+            System.out.println(getStringOfRow(helper.get(i)) + "   and   " + getStringOfRow(helper.get(j)) + "  Check is " + check);
+            if (check <= 0) {
+                desiredColumnDataforAggregation.set(k, helper.get(i));
+                i++;
+            } else {
+                desiredColumnDataforAggregation.set(k, helper.get(j));
+                j++;
+            }
+        }
 
+        while (i <= middle) {
+            desiredColumnDataforAggregation.set(k, helper.get(i));
+            k++;
+            i++;
         }
     }
 
+    public static String getStringOfRow(ArrayList<String> arrtoString) {
+        StringBuilder str = new StringBuilder();
+        for (int s : groupColumnsIndex) {
+            str.append(arrtoString.get(s));
+        }
+        return str.toString();
+    }
 }

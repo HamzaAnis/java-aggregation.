@@ -9,24 +9,27 @@ public class Aggregate {
 
     static String operation = "";
     static String aggregatedColumn = "";
+    static int aggregatedColumnNumber=0;
     static String inputFile = "";
     public static ArrayList<String> groupColumns = null;
     public static ArrayList<ArrayList<String>> csvData;
-    public static ArrayList<ArrayList<String>> desiredColumnDataforAggregation; //An array list to 
+    public static ArrayList<ArrayList<String>> desiredColumnDataforAggregation; //An array list to have the only columns on which we have to appply aggrgation
 
     public static void main(String args[]) throws IOException {
+        //initialization
         groupColumns = new ArrayList<String>();
         csvData = new ArrayList<ArrayList<String>>();
         desiredColumnDataforAggregation = new ArrayList<ArrayList<String>>();
-        int columnCount = 0;
+
         if (args.length > 0) {
-            operation = args[0];
-            aggregatedColumn = args[1];
-            inputFile = args[2];
+            operation = args[0];//Operation is first argument
+            aggregatedColumn = args[1];//To aggreagte the colun is the second one
+            inputFile = args[2]; //Input file is third argument
 //            System.out.println("Aggregated column is " + aggregatedColumn);
 //            System.out.println("Operation is " + operation);
 
-            System.out.println(args.length);
+//            System.out.println(args.length);
+            int columnCount = 0;
             while (columnCount + 3 < args.length) {
                 try {
                     groupColumns.add(args[columnCount + 3]);
@@ -91,6 +94,9 @@ public class Aggregate {
 
             if (groupColumns.contains(temp) || temp.equals(aggregatedColumn)) {
                 toKeep.add(i);
+                if(temp.equals(aggregatedColumn)){
+                    aggregatedColumnNumber=i;
+                }
                 //                System.out.println(temp + " is selected");
             }
             i++;
@@ -111,4 +117,27 @@ public class Aggregate {
         System.out.println(desiredColumnDataforAggregation);
 //System.out.println(csvData);
     }
+
+    public static void mergerSort() {
+        ArrayList<ArrayList<String>> helper = new ArrayList<ArrayList<String>>();
+    }
+
+    public static void mergerSorthelper(int low, int high) {
+        if (low < high) {
+            int middle = low + (high - low) / 2;
+            mergerSorthelper(low, middle);
+            mergerSorthelper(middle + 1, high);
+        }
+    }
+    
+    public static void merge(int low,int middle,int high){
+        int i=low;
+        int j=middle+1;
+        int k=low;
+        
+        while(i<middle&&j<=high){
+            
+        }
+    }
+
 }

@@ -12,12 +12,12 @@ public class Aggregate {
     static String inputFile = "";
     public static ArrayList<String> groupColumns = null;
     public static ArrayList<ArrayList<String>> csvData;
-    public static ArrayList<ArrayList<String>> desiredColumnforAggregation;
+    public static ArrayList<ArrayList<String>> desiredColumnDataforAggregation; //An array list to 
 
     public static void main(String args[]) throws IOException {
         groupColumns = new ArrayList<String>();
         csvData = new ArrayList<ArrayList<String>>();
-        desiredColumnforAggregation = new ArrayList<ArrayList<String>>();
+        desiredColumnDataforAggregation = new ArrayList<ArrayList<String>>();
         int columnCount = 0;
         if (args.length > 0) {
             operation = args[0];
@@ -95,6 +95,20 @@ public class Aggregate {
             }
             i++;
         }
-        System.out.println(toKeep);
+//        System.out.println(toKeep);
+
+        for (ArrayList<String> rows : csvData) {
+//            System.out.println(rows);
+//            System.out.println(rows.size());
+            ArrayList<String> tempColumn = new ArrayList<>();// Will be clear on every iteration
+            for (i = 0; i < rows.size(); i++) {
+                if (toKeep.contains(i)) {
+                    tempColumn.add(rows.get(i));
+                }
+            }
+            desiredColumnDataforAggregation.add(tempColumn);
+        }
+        System.out.println(desiredColumnDataforAggregation);
+//System.out.println(csvData);
     }
 }

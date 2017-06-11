@@ -18,6 +18,7 @@ public class Aggregate {
     public static ArrayList<ArrayList<String>> csvData; //In this 2d array the data is stored
     public static ArrayList<ArrayList<String>> desiredColumnDataforAggregation; //An array list to have the only columns on which we have to appply aggrgation
 //    public static ArrayList<ArrayList<String>> helper;
+    public static ArrayList<ArrayList<ArrayList<String>>> operationArray; //An array to perform operations
 
     public static void main(String args[]) throws IOException {
         //initialising values
@@ -25,6 +26,7 @@ public class Aggregate {
         groupColumnsIndex = new ArrayList<Integer>();
         csvData = new ArrayList<ArrayList<String>>();
         desiredColumnDataforAggregation = new ArrayList<ArrayList<String>>();
+        operationArray = new ArrayList<ArrayList<ArrayList<String>>>();
         //if the arguments are given
         if (args.length > 0) {
             operation = args[0];//Operation is first argument
@@ -51,12 +53,13 @@ public class Aggregate {
             sort();//Sorting the arraylist
 //            getDesiredColumnsAgain();
             System.out.println("Operation is " + operation);
+            
             if (operation.equals("sum")) {
                 sum();
             } else if (operation.equals("count")) {
-                System.out.println("Need to do avg");
+                count();
             } else if (operation.equals("avg")) {
-                System.out.println("Need to do avg");
+                avg();
             }
 
             for (ArrayList<String> a : desiredColumnDataforAggregation) {
@@ -74,13 +77,73 @@ public class Aggregate {
 
     public static int sum() {
         int sum = 0;
-        int i = 0;
         System.out.println("Aggregated " + aggregatedColumnNumber);
-        for (ArrayList<String> arr : desiredColumnDataforAggregation) {
-            System.out.println("sddsf  " + arr.get(aggregatedColumnNumber));
+        ArrayList<String> arr = desiredColumnDataforAggregation.get(1);
+        String check = arr.get(0);
+        ArrayList<ArrayList<String>> push = new ArrayList<ArrayList<String>>();
+        for (int i = 1; i < desiredColumnDataforAggregation.size() - 1; i++) {
+            ArrayList<String> arrTemp = desiredColumnDataforAggregation.get(i);
+            String check1 = arrTemp.get(0);
+            if (check.equals(check1)) {
+//                System.out.println("Pushing "+arrTemp.get(0) );
+                push.add(arrTemp);
+            } else {
+//                System.out.println("Push is "+push);
+                operationArray.add(push);
+                push.clear();
+                check = arrTemp.get(0);
+            }
             i++;
         }
+//        for (ArrayList<ArrayList<String>> t : operationArray) {
+//            System.out.println(t);
+//        }
+//        System.out.println("operatiubak array is "+operationArray);
         return sum;
+    }
+
+    public static int avg() {
+        int avg = 0;
+        ArrayList<String> arr = desiredColumnDataforAggregation.get(1);
+        String check = arr.get(0);
+        ArrayList<ArrayList<String>> push = new ArrayList<ArrayList<String>>();
+        for (int i = 1; i < desiredColumnDataforAggregation.size() - 1; i++) {
+            ArrayList<String> arrTemp = desiredColumnDataforAggregation.get(i);
+            String check1 = arrTemp.get(0);
+            if (check.equals(check1)) {
+                push.add(arrTemp);
+            } else {
+                operationArray.add(push);
+                push.clear();
+                check = arrTemp.get(0);
+            }
+            i++;
+        }
+  
+//        System.out.println("operatiubak array is "+operationArray);
+        return avg/operationArray.size();
+    }
+
+    public static int count() {
+        ArrayList<String> arr = desiredColumnDataforAggregation.get(1);
+        String check = arr.get(0);
+        ArrayList<ArrayList<String>> push = new ArrayList<ArrayList<String>>();
+        for (int i = 1; i < desiredColumnDataforAggregation.size() - 1; i++) {
+            ArrayList<String> arrTemp = desiredColumnDataforAggregation.get(i);
+            String check1 = arrTemp.get(0);
+            if (check.equals(check1)) {
+//                System.out.println("Pushing "+arrTemp.get(0) );
+                push.add(arrTemp);
+            } else {
+//                System.out.println("Push is "+push);
+                operationArray.add(push);
+                push.clear();
+                check = arrTemp.get(0);
+            }
+            i++;
+        }
+ 
+        return operationArray.size();
     }
 
     public static void sort() {
@@ -166,8 +229,7 @@ public class Aggregate {
 
         pw.close();
 
-        System.out.println("The data is write back to the " + fileName);
-
+        System.out.println("The data is write back to the " + fileName + "\n\n");
     }
 
     public static void getDesiredColumnsAgain() {
@@ -187,7 +249,6 @@ public class Aggregate {
                 }
             }
         }
-
         return result;
     }
 
@@ -222,6 +283,7 @@ public class Aggregate {
 //                if (toKeep.contains(i)) {
 //                    tempColumn.add(rows.get(i));
 //                }
+//tempColumn.
                 tempColumn.add(rows.get(toKeep.get(i)));
             }
             desiredColumnDataforAggregation.add(tempColumn);
